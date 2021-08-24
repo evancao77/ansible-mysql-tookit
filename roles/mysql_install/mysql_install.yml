@@ -1,4 +1,0 @@
-- name: deploy mysql
-  hosts: mysqlhosts
-  roles:
-    - mysql_install

@@ -1,7 +1,0 @@
-[mysqlhosts]
-master ansible_ssh_host=10.0.0.33 MYSQL_PORT=3306
-slave1 ansible_ssh_host=10.0.0.33 MYSQL_PORT=3307
-slave2 ansible_ssh_host=10.0.0.33 MYSQL_PORT=3308
-
-[all:vars]
-port = 3306

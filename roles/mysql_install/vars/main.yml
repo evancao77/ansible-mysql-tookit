@@ -1,7 +1,0 @@
-MYSQL_USER: mysql
-MYSQL_VERSION: mysql-5.7
-BASE_DIR: /usr/local/mysql{{ MYSQL_PORT }}
-DATA_DIR: /data/mysql{{ MYSQL_PORT }}
-CONFIG_DIR: /usr/local/mysql{{ MYSQL_PORT }}/conf
-SOCKET_DIR: /var/lib/mysql
-LOWER_CASE_TABLE_NAMES: 1

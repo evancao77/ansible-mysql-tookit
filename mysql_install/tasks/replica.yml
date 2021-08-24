@@ -1,0 +1,86 @@
+- debug:
+    msg: "{{hostvars[item].ansible_ssh_host}}"
+  with_items:
+    - "{{groups['mysqlhosts']}}"
+
+
+- name: grant mysql user
+  mysql_user:
+    login_host: "localhost"
+    login_user: "root"
+    login_port: "{{ MYSQL_PORT }}"
+    sql_log_bin: "0"
+    login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
+    name: "repl"
+    password: "Repl1234!"
+    host: "{{hostvars[item].ansible_ssh_host}}"
+    priv: "*.*:REPLICATION SLAVE,GRANT"
+    state: "present"
+  with_items:
+    - "{{groups['mysqlhosts']}}"
+
+
+- name : set master_host
+  set_fact:
+    master_host: "{{ hostvars[item].ansible_ssh_host }}"
+  with_items:
+    - "{{groups['mysqlhosts']}}"
+  when:
+    - hostvars[item].MYSQL_ROLE =='master' and MYSQL_ROLE == 'slave'
+
+
+- name: Check slave replication status.
+  mysql_replication:
+    mode: getslave
+    login_host: "{{ ansible_ssh_host }}"
+    login_user: "root"
+    login_port: "{{ MYSQL_PORT }}"
+    login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
+  ignore_errors: true
+  register: slave
+  when:
+    - MYSQL_ROLE  == 'slave'
+
+- debug:
+    msg: "{{slave}}"
+
+- name: Stop replication.
+  mysql_replication:
+    mode: stopslave
+    login_host: "{{ ansible_ssh_host }}"
+    login_user: "root"
+    login_port: "{{ MYSQL_PORT }}"
+    login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
+  when:
+    - MYSQL_ROLE  == 'slave'
+
+
+- name: Configure replication on the slave.
+  mysql_replication:
+    mode: changemaster
+    login_host: "{{ ansible_ssh_host }}"
+    login_user: "root"
+    login_port: "{{ MYSQL_PORT }}"
+    login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
+    master_host: "{{ master_host }}"
+    master_user: "{{ replica_user }}"
+    master_auto_position: "1"
+    master_connect_retry: "86400"
+  ignore_errors: true
+  when:
+    -  MYSQL_ROLE  == 'slave'
+
+- name: Start replication.
+  mysql_replication:
+    mode: startslave
+    login_host: "{{ ansible_ssh_host }}"
+    login_user: "root"
+    login_port: "{{ MYSQL_PORT }}"
+    login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
+  when:
+    - MYSQL_ROLE  == 'slave'
+
+
+
+
+
