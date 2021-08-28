@@ -1,0 +1,16 @@
+mysql.service 
+[Unit]
+Description=MySQL Server
+Documentation=man:mysqld(8)
+Documentation=http://dev.mysql.com/doc/refman/en/using-systemd.html
+After=network.target
+After=syslog.target
+[Install]
+WantedBy=multi-user.target
+[Service]
+User={{MYSQL_USER}}
+Group={{MYSQL_USER}}
+ExecStart={{BASE_DIR}}/bin/mysqld --defaults-file={{CONFIG_DIR}}/my{{MYSQL_PORT}}.cnf
+LimitNOFILE =65535
+Restart=on-failure
+RestartSec=1

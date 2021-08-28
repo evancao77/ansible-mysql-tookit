@@ -1,0 +1,11 @@
+
+# 获取操作系统 内存等配置信息
+#- include_tasks: pre.yml
+
+# 执行安装
+#- include_tasks: setup_centos.yml
+
+# 用户配置
+
+# 主从配置
+-  include_tasks: replica.yml
