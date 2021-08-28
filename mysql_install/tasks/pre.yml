@@ -21,6 +21,6 @@
 
 - name: set ip
   set_fact:
-    _server_id: "{{port}}{{ ip_st.stdout }}{{ ip_st1.stdout }}"
+    _server_id: "{{ MYSQL_PORT}}{{ ip_st.stdout }}{{ ip_st1.stdout }}"
 
 

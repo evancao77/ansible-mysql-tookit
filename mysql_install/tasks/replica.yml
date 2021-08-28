@@ -11,8 +11,8 @@
     login_port: "{{ MYSQL_PORT }}"
     sql_log_bin: "0"
     login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
-    name: "repl"
-    password: "Repl1234!"
+    name: "{{ replica_user }}"
+    password: "{{ replica_pwd }}"
     host: "{{hostvars[item].ansible_ssh_host}}"
     priv: "*.*:REPLICATION SLAVE,GRANT"
     state: "present"
@@ -64,6 +64,7 @@
     login_unix_socket: "{{SOCKET_DIR}}/mysql{{MYSQL_PORT}}.sock"
     master_host: "{{ master_host }}"
     master_user: "{{ replica_user }}"
+    master_password: "{{ replica_pwd }}"
     master_auto_position: "1"
     master_connect_retry: "86400"
   ignore_errors: true
